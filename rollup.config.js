@@ -6,6 +6,7 @@ import {terser} from 'rollup-plugin-terser'
 import {promisify} from 'util'
 import {writeFile} from 'fs'
 import sass from 'sass'
+import mkdirp from 'mkdirp'
 
 const production = !process.env.ROLLUP_WATCH
 
@@ -78,10 +79,11 @@ function serve() {
 function scss() {
   return {
     buildStart() {
-      return promisify(sass.render)({
-        file: 'src/global.scss',
-        sourceMap: 'public/build/global.css.map',
-      })
+      return mkdirp('public/build')
+        .then(() => promisify(sass.render)({
+          file: 'src/global.scss',
+          sourceMap: 'public/build/global.css.map',
+        }))
         .then(result => promisify(writeFile)('public/build/global.css', result.css)
           .then(() => promisify(writeFile)('public/build/global.css.map', result.map)))
     },
