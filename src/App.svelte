@@ -20,10 +20,10 @@
     }
 
     function addTracker() {
-        trackers = [...trackers, {
+        trackers = [{
             description: `Tracker #${++tally}`,
             start: DateTime.local(),
-        }]
+        }, ...trackers]
     }
 
     function removeTracker(tracker) {
