@@ -1,7 +1,10 @@
 <script>
     import {onMount} from 'svelte'
     import {blur} from 'svelte/transition'
-    import {DateTime, Duration} from 'luxon'
+    import dayjs from 'dayjs'
+    import duration from 'dayjs/plugin/duration'
+
+    dayjs.extend(duration)
 
     const storageKey = 'trackers'
 
@@ -14,7 +17,10 @@
         tally = parsed.tally || 0
         trackers = parsed.trackers && parsed.trackers
                 .map(tracker => {
-                    tracker.start = DateTime.fromISO(tracker.start)
+                    tracker.start = dayjs(tracker.start)
+                    if (tracker.stop) {
+                        tracker.stop = dayjs(tracker.stop)
+                    }
                     return tracker
                 }) || []
     }
@@ -22,19 +28,23 @@
     function addTracker() {
         trackers = [{
             description: `Tracker #${++tally}`,
-            start: DateTime.local(),
+            start: dayjs(),
         }, ...trackers]
     }
 
     function removeTracker(tracker) {
-      trackers = trackers.filter(t => t != tracker)
+        trackers = trackers.filter(t => t != tracker)
+    }
+
+    function formatDuration(duration) {
+        return `${duration.hours().toString().padStart(2, "0")}:${duration.minutes().toString().padStart(2, "0")}:${duration.seconds().toString().padStart(2, "0")}`
     }
 
     setInterval(() => {
-        const now = DateTime.local()
+        const now = dayjs()
         trackers = trackers
                 .map(tracker => {
-                    tracker.elapsed = (tracker.stop || now).diff(tracker.start)
+                    tracker.elapsed = dayjs.duration((tracker.stop || now).diff(tracker.start))
                     return tracker
                 })
     }, 1000)
@@ -42,8 +52,8 @@
     $: {
         localStorage.setItem(storageKey, JSON.stringify({
             trackers: trackers.map(t => ({
-                start: t.start,
-                stop: t.stop,
+                start: t.start.toISOString(),
+                ...(t.stop && {stop: t.stop.toISOString()}),
                 description: t.description,
             })),
             tally,
@@ -54,7 +64,13 @@
 <main class="section">
     <article class="container">
         <nav class="level">
-            <div class="level-left"></div>
+            <div class="level-left">
+                {#if trackers.length}
+                    <p class="level-item">
+                        <button class="button is-primary">Save</button>
+                    </p>
+                {/if}
+            </div>
             <div class="level-right">
                 <p class="level-item">
                     <button class="button is-link" on:click={addTracker}>Add tracker</button>
@@ -69,19 +85,21 @@
                         <span class="level-item" on:click={() => tracker.editable = true}>{tracker.description}</span>
                     {:else}
                         <input type="text" style="margin-left: calc(-0.75em)" class="input level-item"
-                               bind:value={tracker.description} on:keyup={(e) => tracker.editable = e.key != 'Enter'} autofocus>
+                               bind:value={tracker.description} on:keyup={(e) => tracker.editable = e.key != 'Enter'}
+                               autofocus>
                         <button class="button is-success level-item" on:click={() => tracker.editable = false}>
                             Done
                         </button>
                     {/if}
                 </div>
                 <div class="level-right">
-                    <span class="level-item">{(tracker.elapsed || Duration.fromMillis(0)).toFormat('hh:mm:ss')}</span>
-                    <button class="button is-small is-danger level-item is-hidden" on:click={() => removeTracker(tracker)}>
+                    <span class="level-item">{formatDuration(tracker.elapsed || dayjs.duration(0))}</span>
+                    <button class="button is-small is-danger level-item is-hidden"
+                            on:click={() => removeTracker(tracker)}>
                         Remove
                     </button>
                     <button class="button is-small is-danger level-item" disabled={!!tracker.stop}
-                            on:click={() => tracker.stop = DateTime.local()}>
+                            on:click={() => tracker.stop = dayjs()}>
                         Stop
                     </button>
                 </div>
