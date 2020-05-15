@@ -61,55 +61,88 @@
     }
 </script>
 
-<main class="section">
-    <article class="container">
-        <nav class="level">
-            <div class="level-left">
-                {#if trackers.length}
-                    <p class="level-item">
-                        <button class="button is-primary">Save</button>
-                    </p>
-                {/if}
-            </div>
-            <div class="level-right">
-                <p class="level-item">
-                    <button class="button is-link" on:click={addTracker}>Add tracker</button>
-                </p>
-            </div>
-        </nav>
+<nav>
+    <button class="button is-link" on:click={addTracker}>Add tracker</button>
+</nav>
 
+<main>
+    <div>
         {#each trackers as tracker}
-            <div class="level box" class:hover-show={!!tracker.stop} in:blur={{duration: 200}} out:blur>
-                <div class="level-left">
+            <div class="stack list-item" class:hover-show={!!tracker.stop} in:blur={{duration: 200}} out:blur>
+                <div>
                     {#if !tracker.editable}
-                        <span class="level-item" on:click={() => tracker.editable = true}>{tracker.description}</span>
+                        <span on:click={() => tracker.editable = true}>{tracker.description}</span>
                     {:else}
-                        <input type="text" style="margin-left: calc(-0.75em)" class="input level-item"
-                               bind:value={tracker.description} on:keyup={(e) => tracker.editable = e.key != 'Enter'}
+                        <input type="text" style="margin-left: calc(-0.6em)"
+                               bind:value={tracker.description}
+                               on:keyup={(e) => tracker.editable = e.key != 'Enter'}
                                autofocus>
-                        <button class="button is-success level-item" on:click={() => tracker.editable = false}>
+                        <button class="success" on:click={() => tracker.editable = false}>
                             Done
                         </button>
                     {/if}
                 </div>
-                <div class="level-right">
-                    <span class="level-item">{formatDuration(tracker.elapsed || dayjs.duration(0))}</span>
-                    <button class="button is-small is-danger level-item is-hidden"
-                            on:click={() => removeTracker(tracker)}>
-                        Remove
-                    </button>
-                    <button class="button is-small is-danger level-item" disabled={!!tracker.stop}
-                            on:click={() => tracker.stop = dayjs()}>
-                        Stop
-                    </button>
+                <div>
+                    <span>{formatDuration(tracker.elapsed || dayjs.duration(0))}</span>
+                    {#if !tracker.stop}
+                        <button class="button warning" disabled={!!tracker.stop}
+                                on:click={() => tracker.stop = dayjs()}>
+                            Stop
+                        </button>
+                    {:else}
+                        <button class="button error" on:click={() => removeTracker(tracker)}>
+                            Remove
+                        </button>
+                    {/if}
                 </div>
             </div>
         {/each}
-    </article>
+    </div>
 </main>
 
 <style>
-    .hover-show:hover button.is-hidden {
-        display: initial !important;
+    main {
+        padding: 3em 1.5em;
+    }
+
+    main > div {
+        margin: 0 auto;
+        max-width: 1200px;
+    }
+
+    nav {
+        display: flex;
+        justify-content: flex-end;
+        position: relative;
+    }
+
+    .list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: .75rem;
+        border: lightgray solid 1px;
+    }
+
+    .list-item:not(:first-child) {
+        border-top: 0;
+    }
+
+    .list-item > div {
+        display: flex;
+        align-items: center;
+    }
+
+    .list-item > div > *:not(:last-child) {
+        margin-right: .25rem;
+    }
+
+    .list-item > div > span:first-child {
+        border: white solid 1px;
+    }
+
+    .list-item button {
+        width: 80px;
+        font-size: .75em;
     }
 </style>
