@@ -1,6 +1,6 @@
 <script lang="ts">
   import dayjs from "dayjs";
-  import { blur, slide } from "svelte/transition";
+  import { slide } from "svelte/transition";
   import ListItem from "./ListItem.svelte";
   import type { Tracker } from "./types";
 
