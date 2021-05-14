@@ -104,4 +104,12 @@
     justify-content: flex-end;
     position: relative;
   }
+
+  .stack {
+    border: lightgray solid 1px;
+  }
+
+  .stack:not(:first-child) {
+    border-top: 0;
+  }
 </style>

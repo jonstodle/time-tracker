@@ -29,7 +29,7 @@
 </script>
 
 <article>
-  <div>
+  <div class="input-container">
     <input
       type="text"
       bind:this={inputElement}
@@ -58,10 +58,12 @@
   input {
     border-color: transparent;
     margin-right: 0.25rem;
+    cursor: pointer;
   }
 
   input.is-editing {
     border-color: inherit;
+    cursor: inherit;
   }
 
   article {
@@ -69,11 +71,6 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem;
-    border: lightgray solid 1px;
-  }
-
-  article:not(:first-child) {
-    border-top: 0;
   }
 
   article > div {
@@ -85,12 +82,12 @@
     margin-right: 0.25rem;
   }
 
-  article > div > span:first-child {
-    border: white solid 1px;
-  }
-
   article button {
     width: 80px;
     font-size: 0.75em;
+  }
+
+  .input-container {
+    flex: 1;
   }
 </style>
