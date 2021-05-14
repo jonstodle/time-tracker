@@ -8,11 +8,13 @@ import {writeFile} from 'fs'
 import css from 'rollup-plugin-css-only';
 import sass from 'sass'
 import mkdirp from 'mkdirp'
+import {sveltePreprocess} from 'svelte-preprocess/dist/autoProcess'
+import typescript from '@rollup/plugin-typescript';
 
 const production = !process.env.ROLLUP_WATCH
 
 export default {
-  input: 'src/main.js',
+  input: 'src/main.ts',
   output: {
     sourcemap: true,
     format: 'iife',
@@ -21,7 +23,8 @@ export default {
   },
   plugins: [
     svelte({
-      compilerOptions: {
+      preprocess: sveltePreprocess({ sourceMap: !production }),
+			compilerOptions: {
         // enable run-time checks when not in production
         dev: !production
       }
@@ -38,6 +41,10 @@ export default {
       dedupe: ['svelte'],
     }),
     commonjs(),
+		typescript({
+			sourceMap: !production,
+			inlineSources: !production
+		}),
 
     scss(),
 
