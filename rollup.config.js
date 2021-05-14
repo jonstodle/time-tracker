@@ -5,6 +5,7 @@ import livereload from 'rollup-plugin-livereload'
 import {terser} from 'rollup-plugin-terser'
 import {promisify} from 'util'
 import {writeFile} from 'fs'
+import css from 'rollup-plugin-css-only';
 import sass from 'sass'
 import mkdirp from 'mkdirp'
 
@@ -20,14 +21,12 @@ export default {
   },
   plugins: [
     svelte({
-      // enable run-time checks when not in production
-      dev: !production,
-      // we'll extract any component CSS out into
-      // a separate file - better for performance
-      css: css => {
-        css.write('public/build/bundle.css')
-      },
+      compilerOptions: {
+        // enable run-time checks when not in production
+        dev: !production
+      }
     }),
+    css({ output: 'bundle.css' }),
 
     // If you have external dependencies installed from
     // npm, you'll most likely need these plugins. In
