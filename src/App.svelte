@@ -3,6 +3,7 @@
   import { slide } from "svelte/transition";
   import ListItem from "./ListItem.svelte";
   import type { Tracker } from "./types";
+  import IconButton from "./IconButton.svelte";
 
   const storageKey = "trackers";
 
@@ -76,7 +77,12 @@
 </script>
 
 <nav>
-  <button class="button is-link" on:click={addTracker}>Add tracker</button>
+  <IconButton
+    icon="plus"
+    on:click={addTracker}
+    aria-label="Add tracker"
+    data-balloon-pos="left"
+  />
 </nav>
 
 <main>

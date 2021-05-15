@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import type { Tracker } from "./types";
   import dayjs from "dayjs";
+  import IconButton from "./IconButton.svelte";
 
   export let tracker: Tracker;
 
@@ -43,13 +44,21 @@
   <div>
     <span>{formatDuration(tracker.elapsed || dayjs.duration(0))}</span>
     {#if !tracker.stop}
-      <button class="button warning" on:click={() => (tracker.stop = dayjs())}>
-        Stop
-      </button>
+      <IconButton
+        icon="stop"
+        class="warning"
+        on:click={() => (tracker.stop = dayjs())}
+        aria-label="Stop"
+        data-balloon-pos="left"
+      />
     {:else}
-      <button class="button error" on:click={() => removeTracker(tracker)}>
-        Remove
-      </button>
+      <IconButton
+        icon="bin"
+        class="error"
+        on:click={() => removeTracker(tracker)}
+        aria-label="Remove"
+        data-balloon-pos="left"
+      />
     {/if}
   </div>
 </article>
