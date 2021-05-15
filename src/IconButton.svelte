@@ -1,6 +1,5 @@
 <script lang="ts">
   export let icon: string;
-  console.log($$slots);
 </script>
 
 <button {...$$restProps} type="button" on:click>

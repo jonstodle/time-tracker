@@ -88,7 +88,7 @@
 <main>
   <div>
     {#each trackersView as tracker (tracker.id)}
-      <div class="stack" in:slide out:slide={{ duration: 200 }}>
+      <div class="stack" in:slide out:slide={{ duration: 150 }}>
         <ListItem {tracker} on:removeTracker={removeTracker} />
       </div>
     {/each}
